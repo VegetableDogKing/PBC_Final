@@ -13,7 +13,7 @@ area_dict = {"臺北市": "臺北", "新北市": "新北", "桃園市": "桃園"
 class InputFrame(ttk.Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-
+        
         self.date_label = ttk.Label(self, text="選擇日期(YYYY/MM/DD)：")
         self.date_label.config(background="#FFF0F5", font=("Arial", 30))
         self.date_label.pack()
@@ -44,7 +44,23 @@ class InputFrame(ttk.Frame):
         high, low, rain = get_temp(days_after_today, area)
         up, down, shoes = clothes(high, low)
         print(up, down, shoes)
+        result_frame = ResultFrame(root, self.box.get(), self.cal.get(), high, low, rain, up, down, shoes)
         result_frame.pack()
+
+class ResultFrame(tk.Frame):
+    def __init__(self, parent, area, date, high, low, rain, up, down, shoes, *args, **kwargs):
+        super().__init__(parent, width=800, height=600, *args, **kwargs)
+        self.pack_propagate(0)
+        
+        # Load the transparent background image
+        self.background_image = Image.open("pngtree-guy-walking-in-headphones-png-image_4689319.png")
+        self.background_photo = ImageTk.PhotoImage(self.background_image)
+        self.background_label = tk.Label(self, image=self.background_photo)
+        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        
+        self.result_label = ttk.Label(self, text=f'地區：{area}\n日期：{date}\n今日最高溫：{high}°C\n今日最低溫：{low}°C\n降雨機率：{rain}\n')
+        self.result_label.config(background="#FFF0F5", font=("Arial", 30))
+        self.result_label.pack()
 
 root = tk.Tk()
 root.title("讓我來尋找您的一日穿搭")
@@ -63,9 +79,5 @@ style.configure('TFrame', background="#FFF0F5")
 
 input_frame = InputFrame(root)
 input_frame.pack(pady=20)
-
-result_frame = ttk.Frame(root)
-result_label = ttk.Label(result_frame, text="")
-result_label.pack(pady=20)
 
 root.mainloop()

@@ -1,0 +1,6 @@
+style = ttk.Style()
+style.configure("TEntry", font=("Helvetica", 30))
+style.configure("TButton", font=("Arial", 30), foreground="#CD5C5C")
+style.configure('TCombobox', arrowsize=30)
+style.configure('TListbox', font=('Arial', 30))
+style.configure('TFrame', background="#FFF0F5")

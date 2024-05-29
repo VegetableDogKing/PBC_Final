@@ -6,14 +6,14 @@ from datetime import datetime, timedelta
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 from weather import get_temp
+from model import clothes
 
 area_dict = {"臺北市": "臺北", "新北市": "新北", "桃園市": "桃園", "臺中市": "臺中", "臺南市": "臺南", "高雄市": "高雄", "基隆市": "基隆", "新竹縣": "新竹", "苗栗縣": "苗栗", "彰化縣": "彰化", "南投縣": "南投", "雲林縣": "雲林", "嘉義市": "嘉義", "屏東縣": "屏東", "嘉義市": "嘉義", "宜蘭縣": "宜蘭", "花蓮縣": "花蓮", "臺東縣": "臺東"}
 
 class InputFrame(ttk.Frame):
-    def __init__(self, parent, result_frame, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.result_frame = result_frame
-
+        
         self.date_label = ttk.Label(self, text="選擇日期(YYYY/MM/DD)：")
         self.date_label.config(background="#FFF0F5", font=("Arial", 30))
         self.date_label.pack()
@@ -42,18 +42,27 @@ class InputFrame(ttk.Frame):
         delta = date - datetime.today()
         days_after_today = delta.days + 1
         high, low, rain = get_temp(days_after_today, area)
-        print(high, low, rain)
-        self.result_frame.update_result(f"地區: {area}, 日期: {self.cal.get()}, 天數: {days_after_today}")
-        self.result_frame.pack()
+        up, down, shoes = clothes(high, low)
+        print(up, down, shoes)
+        result_frame = ResultFrame(root, self.box.get(), self.cal.get(), high, low, rain, up, down, shoes)
+        result_frame.pack()
 
-class ResultFrame(ttk.Frame):
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-        self.result_label = ttk.Label(self, text="")
-        self.result_label.pack(pady=20)
 
-    def update_result(self, text):
-        self.result_label.config(text=text)
+class ResultFrame(tk.Frame):
+    def __init__(self, parent, area, date, high, low, rain, up, down, shoes, *args, **kwargs):
+        super().__init__(parent, width=800, height=600, *args, **kwargs)
+        self.pack_propagate(0)
+        
+        self.result_label = ttk.Label(self, text=f'地區：{area}\n日期：{date}\n今日最高溫：{high}°C\n今日最低溫：{low}°C\n降雨機率：{rain}\n')
+        self.result_label.config(background="#FFF0F5", font=("Arial", 30))
+        self.result_label.pack()
+
+        self.model_image = Image.open("pngtree-guy-walking-in-headphones-png-image_4689319.png")
+        self.model_image = self.model_image.resize((300, 300))
+        self.model_photo = ImageTk.PhotoImage(self.model_image)
+        self.model_label = tk.Label(self, image=self.model_photo)
+        self.model_label.place(relx=0.5, rely=0.5, anchor='center')
+        self.model_label.pack(pady=50)
 
 root = tk.Tk()
 root.title("讓我來尋找您的一日穿搭")
@@ -70,8 +79,7 @@ style.configure('TCombobox', arrowsize=30)
 style.configure('TListbox', font=('Arial', 30))
 style.configure('TFrame', background="#FFF0F5")
 
-result_frame = ResultFrame(root)
-input_frame = InputFrame(root, result_frame)
+input_frame = InputFrame(root)
 input_frame.pack(pady=20)
 
 root.mainloop()
