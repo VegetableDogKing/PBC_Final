@@ -1,7 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-import webbrowser
 
 def get_temp(day, area):
     url = 'https://tw.news.yahoo.com/weather/%E8%87%BA%E7%81%A3/%E8%87%BA%E5%8C%97%E5%B8%82/%E8%87%BA%E5%8C%97%E5%B8%82-2306179' 

@@ -1,30 +1,31 @@
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 
 def clothes(high, low):
     temp = [[high, low]]
     
+    # Predicting upper clothing
     data = pd.read_csv('up.csv')
     X = data.iloc[:, :-1].values
     Y = data.iloc[:, -1].values
-    model = LinearRegression()
+    model = RandomForestRegressor(n_estimators=100, random_state=0)
     model.fit(X, Y)
     up_pred = model.predict(temp)
 
-    if up_pred < 16:
+    if up_pred[0] not in [3, 4]:
+        # Predicting lower clothing
         data = pd.read_csv('down.csv')
         X = data.iloc[:, :-1].values
         Y = data.iloc[:, -1].values
-        model = LinearRegression()
+        model = RandomForestRegressor(n_estimators=100, random_state=0)
         model.fit(X, Y)
         down_pred = model.predict(temp)
-    else:
-        down_pred = 0
-    
+
+    # Predicting shoes
     data = pd.read_csv('shoes.csv')
     X = data.iloc[:, :-1].values
     Y = data.iloc[:, -1].values
-    model = LinearRegression()
+    model = RandomForestRegressor(n_estimators=100, random_state=0)
     model.fit(X, Y)
     shoes_pred = model.predict(temp)
 
